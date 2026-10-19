@@ -37,13 +37,13 @@ function AuthPage() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) return toast.error("Enter a valid email");
-    if (password.length < 8) return toast.error("Password must be at least 8 characters");
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) { toast.error("Enter a valid email"); return; }
+    if (password.length < 8) { toast.error("Password must be at least 8 characters"); return; }
     setBusy(true);
     if (mode === "in") {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       setBusy(false);
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
       navigate({ to: "/dashboard" });
     } else {
       const { data, error } = await supabase.auth.signUp({ email: email.trim(), password, options: { emailRedirectTo: window.location.origin } });
@@ -55,7 +55,7 @@ function AuthPage() {
 
   async function google() {
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) return toast.error(String(r.error.message ?? r.error));
+    if (r.error) { toast.error(String(r.error.message ?? r.error)); return; }
     if (r.redirected) return;
     navigate({ to: "/dashboard" });
   }

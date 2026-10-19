@@ -26,7 +26,7 @@ function Sales() {
 
   async function doReturn() {
     if (!ret) return;
-    const { error } = await supabase.rpc("return_sale", { p_sale_id: ret.id, p_note: note || undefined });
+    const { error } = await supabase.rpc("return_sale", { p_sale_id: ret.id, ...(note.trim() ? { p_note: note.trim() } : {}) });
     if (error) toast.error(error.message); else { toast.success("Sale returned and stock restored"); invalidate(); }
     setRet(null); setNote("");
   }

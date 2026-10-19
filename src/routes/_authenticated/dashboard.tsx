@@ -33,7 +33,7 @@ function Dashboard() {
 
   async function loadSample() {
     const { error } = await supabase.rpc("load_sample_data");
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Sample products loaded — clearly marked [Sample]. Remove them anytime in Settings.");
     invalidate();
   }

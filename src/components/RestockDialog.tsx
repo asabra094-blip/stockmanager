@@ -37,16 +37,16 @@ export function RestockDialog({ open, onOpenChange, product }: { open: boolean; 
   async function save(e: FormEvent) {
     e.preventDefault();
     const n = parseInt(qty), c = Number(cost);
-    if (!p) return toast.error("Choose a product");
-    if (!(n > 0) || String(n) !== qty.trim()) return toast.error("Quantity must be a whole number above 0");
-    if (cost === "" || !(c >= 0)) return toast.error("Enter a valid unit cost");
+    if (!p) { toast.error("Choose a product"); return; }
+    if (!(n > 0) || String(n) !== qty.trim()) { toast.error("Quantity must be a whole number above 0"); return; }
+    if (cost === "" || !(c >= 0)) { toast.error("Enter a valid unit cost"); return; }
     setBusy(true);
     const { error } = await supabase.rpc("restock_product", {
-      p_product_id: p.id, p_quantity: n, p_unit_cost: c, p_supplier_id: sup || undefined,
-      p_date: new Date(date + "T12:00:00").toISOString(), p_update_cost: updateCost, p_note: note || undefined,
+      p_product_id: p.id, p_quantity: n, p_unit_cost: c, ...(sup ? { p_supplier_id: sup } : {}),
+      p_date: new Date(date + "T12:00:00").toISOString(), p_update_cost: updateCost, ...(note.trim() ? { p_note: note.trim() } : {}),
     });
     setBusy(false);
-    if (error) return toast.error(errMsg(error.message));
+    if (error) { toast.error(errMsg(error.message)); return; }
     toast.success(`Added ${n} × ${p.name}`);
     invalidate(); onOpenChange(false);
   }

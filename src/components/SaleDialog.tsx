@@ -66,7 +66,7 @@ export function SaleDialog({ open, onOpenChange, initialProductId }: { open: boo
     setBusy(true);
     const { error } = await supabase.rpc("record_sale", {
       p_lines: lines.map((l) => ({ product_id: l.product.id, quantity: l.quantity, unit_price: Number(l.price) })),
-      p_discount: disc, p_note: note || undefined, p_sold_at: new Date(when).toISOString(),
+      p_discount: disc, ...(note.trim() ? { p_note: note.trim() } : {}), p_sold_at: new Date(when).toISOString(),
     });
     setBusy(false);
     if (error) { toast.error(errMsg(error.message)); setStep("edit"); invalidate(); return; }
